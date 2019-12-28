@@ -40,7 +40,8 @@ def speak():
                 candidates += [(l1 + l2, message, ngram)]
     
         out = sorted(candidates, key = lambda x: x[0])[-1]
-        # print(q_terms, out, candidates)
+        dump(candidates, open('/tmp/out','w'), ensure_ascii=0, indent=2)
+        #print(1111, q_terms, out, candidates)
         _out.put(out[1])
 
 def check():

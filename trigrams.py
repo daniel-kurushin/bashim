@@ -1,12 +1,13 @@
 from json import dump, load
 from rutermextract import TermExtractor
+from pprint import pprint
 
 te = TermExtractor()
-data = load(open('./data/bashim.json', 'r'))
+data = load(open('./data/bashim.100.json', 'r'))
 
 #dump(data, open('/tmp/out.json', 'w'), indent=4, ensure_ascii=0)
 
-messages = []
+messages = ["<|BEGIN|>"]
 n = 0
 for quo in data:
     try:
@@ -17,18 +18,34 @@ for quo in data:
                 s = quo["(%s, 1)" % message]
             messages += s
     except KeyError:
-        pass
+        messages += ["<|END|>"]
+        messages += ["<|BEGIN|>"]
+
+messages = messages[:-1]
+
+pprint(messages)
+
+ngrams = []
+for message in messages:
+    if message == "<|BEGIN|>":
+        ngram = []
+    elif message == "<|END|>":
+        ngrams += [ngram]
+    else:
+        ngram += [message]
     
-ngrams = set([ tuple(messages[i:i+3]) for i in range(len(messages) - 2)])
+#ngrams = set([ tuple(messages[i::i+3]) for i in range(len(messages) - 2)])
 
-rez = []
+pprint(ngrams)
 
-for ngram in ngrams:
-    keys = []
-    for message in ngram:
-        terms = list(set(te(message, strings=1, nested=1)))
-        keys += [(message, terms)]
-    rez += [keys]
-    
-
-dump(rez, open('./data/trigrams.json', 'w'), indent=4, ensure_ascii=0)
+#rez = []
+#
+#for ngram in ngrams:
+#    keys = []
+#    for message in ngram:
+#        
+#        keys += [(message, terms)]
+#    rez += [keys]
+#    
+#
+#dump(rez, open('./data/trigrams.json', 'w'), indent=4, ensure_ascii=0)
